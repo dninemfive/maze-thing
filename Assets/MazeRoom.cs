@@ -20,11 +20,15 @@ namespace com.dninemfive.cmpm121.p3
         {
             doors[door] = false;
         }
+        public void OpenAllDoors()
+        {
+            foreach (Direction d in DirectionHolder.Directions) OpenDoor(d);
+        }
         public IEnumerable<Direction> DoorDirections
         {
             get
             {
-                for (int i = 0; i < doors.Length; i++) if (doors[i]) yield return (Direction)i;
+                foreach(Direction d in DirectionHolder.Directions) if (doors[d]) yield return d;
             }
         }
         public bool CanBeHallway
@@ -40,7 +44,7 @@ namespace com.dninemfive.cmpm121.p3
         private bool _isHallway = false;
         public bool HasDoorFacing(Direction d)
         {
-            return doors[(int)d];
+            return doors[d];
         }
         public void GenerateDoors()
         {
@@ -52,9 +56,9 @@ namespace com.dninemfive.cmpm121.p3
             }
             // add required doors
             MazeRoom temp;
-            for(int i = 0; i < 4; i++)
+            foreach(Direction d in DirectionHolder.Directions)
             {
-                if ((temp = MazeMaker.RoomFrom(position, (Direction)i)) != null && temp.HasDoorFacing((Direction)i)) OpenDoor((Direction)i);
+                if ((temp = MazeMaker.RoomFrom(position, d)) != null && temp.HasDoorFacing(d)) OpenDoor(d);
             }
         }
         public bool Hallway
@@ -83,17 +87,17 @@ namespace com.dninemfive.cmpm121.p3
     }
     public class DirectionHolder
     {
-        public int Length => directionsNESW.Length;
-        private bool[] directionsNESW = { false, false, false, false };
+        public int Length => heldDirections.Length;
+        private bool[] heldDirections = { false, false, false, false };
         public bool this[int index]
         {
             get
             {
-                return directionsNESW[index];
+                return heldDirections[index];
             }
             set
             {
-                directionsNESW[index] = value;
+                heldDirections[index] = value;
             }            
         }
         public bool this[Direction d]
@@ -105,6 +109,17 @@ namespace com.dninemfive.cmpm121.p3
             set
             {
                 this[(int)d] = value;
+            }
+        }
+
+        public static IEnumerable<Direction> Directions
+        {
+            get
+            {
+                yield return Direction.NORTH;
+                yield return Direction.EAST;
+                yield return Direction.SOUTH;
+                yield return Direction.WEST;
             }
         }
     }

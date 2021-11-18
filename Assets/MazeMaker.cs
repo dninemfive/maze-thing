@@ -73,10 +73,7 @@ namespace com.dninemfive.cmpm121.p3 {
             MazeRoom center = GameObject.Find("MazeRoom").GetComponent<MazeRoom>();
             (int x, int y) pos = (0, 0);
             MazeRooms[pos] = center;
-            center.OpenDoor(Direction.NORTH);
-            center.OpenDoor(Direction.EAST);
-            center.OpenDoor(Direction.SOUTH);
-            center.OpenDoor(Direction.WEST);
+            center.OpenAllDoors();
             GenerateNeighbors(center);
         }
     }    
