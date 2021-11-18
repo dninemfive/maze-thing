@@ -9,16 +9,16 @@ namespace com.dninemfive.cmpm121.p3
 {
     public class MazeRoom : MonoBehaviour
     {
-        public bool[] doors = { false, false, false, false };
+        public DirectionHolder doors = new DirectionHolder();
         public (int x, int y) position;
 
         public void OpenDoor(Direction door)
         {
-            doors[(int)door] = true;
+            doors[door] = true;
         }
         public void CloseDoor(Direction door)
         {
-            doors[(int)door] = false;
+            doors[door] = false;
         }
         public IEnumerable<Direction> DoorDirections
         {
@@ -32,8 +32,8 @@ namespace com.dninemfive.cmpm121.p3
             get
             {
                 // because doors is in NESW order, indices of the same parity are in the same direction
-                if (doors[0] && doors[2] && !(doors[1] || doors[3])) return true;
-                if (doors[1] && doors[3] && !(doors[0] || doors[2])) return true;
+                if (doors[Direction.NORTH] && doors[Direction.SOUTH] && !(doors[Direction.EAST] || doors[Direction.WEST])) return true;
+                if (doors[Direction.EAST] && doors[Direction.WEST] && !(doors[Direction.SOUTH] || doors[Direction.NORTH])) return true;
                 return false;
             }
         }
@@ -79,6 +79,33 @@ namespace com.dninemfive.cmpm121.p3
         void Start()
         {
             GenerateDoors();
+        }
+    }
+    public class DirectionHolder
+    {
+        public int Length => directionsNESW.Length;
+        private bool[] directionsNESW = { false, false, false, false };
+        public bool this[int index]
+        {
+            get
+            {
+                return directionsNESW[index];
+            }
+            set
+            {
+                directionsNESW[index] = value;
+            }            
+        }
+        public bool this[Direction d]
+        {
+            get
+            {
+                return this[(int)d];
+            }
+            set
+            {
+                this[(int)d] = value;
+            }
         }
     }
 }
