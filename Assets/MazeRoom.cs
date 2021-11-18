@@ -52,10 +52,10 @@ namespace com.dninemfive.cmpm121.p3
             }
             // add required doors
             MazeRoom temp;
-            if ((temp = MazeMaker.RoomFrom(position, MazeMaker.Direction.SOUTH)) != null && temp.HasDoorFacing(Direction.NORTH)) doors[0] = true;
-            if ((temp = MazeMaker.RoomFrom(position, MazeMaker.Direction.WEST)) != null && temp.HasDoorFacing(Direction.EAST)) doors |= DoorLocations.WEST;
-            if ((temp = MazeMaker.RoomFrom(position, MazeMaker.Direction.NORTH)) != null && temp.HasDoorFacing(Direction.SOUTH)) doors |= DoorLocations.NORTH;
-            if ((temp = MazeMaker.RoomFrom(position, MazeMaker.Direction.EAST)) != null && temp.HasDoorFacing(Direction.WEST)) doors |= DoorLocations.EAST;
+            for(int i = 0; i < 4; i++)
+            {
+                if ((temp = MazeMaker.RoomFrom(position, (Direction)i)) != null && temp.HasDoorFacing((Direction)i)) OpenDoor((Direction)i);
+            }
         }
         public bool Hallway
         {
