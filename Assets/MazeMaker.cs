@@ -3,21 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace com.dninemfive.cmpm121.p3 {
-    public enum Direction : byte
-    {
-        NORTH = 0,
-        EAST = 1,
-        SOUTH = 2,
-        WEST = 3
-    }
+namespace com.dninemfive.cmpm121.p3 {    
     public class MazeMaker : MonoBehaviour
     {
         const int MAX_RECURSION_DEPTH = 4;
         public static Dictionary<(int x, int y), MazeRoom> MazeRooms = new Dictionary<(int x, int y), MazeRoom>();
         public GameObject mazeRoomPrefab;
-        // not the same as DoorDirections mostly because i forgot, but also because they don't need to be interchangeable and it's more readable this way
-        
+        #region generation
         public void GenerateNeighbors(MazeRoom room, int iterations = 0)
         {
             foreach (Direction d in room.DoorDirections)
@@ -34,7 +26,8 @@ namespace com.dninemfive.cmpm121.p3 {
             MazeRooms[pos] = newMR;
             GenerateNeighbors(newMR, ++iterations);
         }
-
+        #endregion generation
+        #region inspection
         public static MazeRoom[] NeighborsOf((int x, int y) pos) 
         {
             return new MazeRoom[] { RoomFrom(pos, Direction.NORTH),
@@ -68,6 +61,7 @@ namespace com.dninemfive.cmpm121.p3 {
                 default: throw new ArgumentNullException();
             }
         }
+        #endregion inspection
         private void Start()
         {
             MazeRoom center = GameObject.Find("MazeRoom").GetComponent<MazeRoom>();

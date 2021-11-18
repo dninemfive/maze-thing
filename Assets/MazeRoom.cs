@@ -9,9 +9,9 @@ namespace com.dninemfive.cmpm121.p3
 {
     public class MazeRoom : MonoBehaviour
     {
-        public DirectionHolder doors = new DirectionHolder();
+        public Directions doors = new Directions();
         public (int x, int y) position;
-
+        #region doors
         public void OpenDoor(Direction door)
         {
             doors[door] = true;
@@ -22,45 +22,23 @@ namespace com.dninemfive.cmpm121.p3
         }
         public void OpenAllDoors()
         {
-            foreach (Direction d in DirectionHolder.Directions) OpenDoor(d);
+            foreach (Direction d in Directions.NESW) OpenDoor(d);
         }
         public IEnumerable<Direction> DoorDirections
         {
             get
             {
-                foreach(Direction d in DirectionHolder.Directions) if (doors[d]) yield return d;
+                foreach(Direction d in Directions.NESW) if (doors[d]) yield return d;
             }
-        }
-        public bool CanBeHallway
-        {
-            get
-            {
-                // because doors is in NESW order, indices of the same parity are in the same direction
-                if (doors[Direction.NORTH] && doors[Direction.SOUTH] && !(doors[Direction.EAST] || doors[Direction.WEST])) return true;
-                if (doors[Direction.EAST] && doors[Direction.WEST] && !(doors[Direction.SOUTH] || doors[Direction.NORTH])) return true;
-                return false;
-            }
-        }
-        private bool _isHallway = false;
+        }       
+        
         public bool HasDoorFacing(Direction d)
         {
             return doors[d];
         }
-        public void GenerateDoors()
-        {
-            int numDoors = UnityEngine.Random.Range(1, 4);
-            for (int i = 0; i < numDoors; i++)
-            {
-                // note that this will produce duplicates sometimes. this is fine by me, since i want to bias toward fewer doors anyway.
-                doors[UnityEngine.Random.Range(0, 3)] = true;
-            }
-            // add required doors
-            MazeRoom temp;
-            foreach(Direction d in DirectionHolder.Directions)
-            {
-                if ((temp = MazeMaker.RoomFrom(position, d)) != null && temp.HasDoorFacing(d)) OpenDoor(d);
-            }
-        }
+        #endregion doors
+        #region hallways
+        private bool _isHallway = false;
         public bool Hallway
         {
             get => _isHallway;
@@ -80,47 +58,36 @@ namespace com.dninemfive.cmpm121.p3
                 }
             }
         }
+        public bool CanBeHallway
+        {
+            get
+            {
+                bool NS = doors[Direction.NORTH] || doors[Direction.SOUTH];
+                bool EW = doors[Direction.EAST]  || doors[Direction.WEST];
+                return (NS && !EW) || (EW && !NS);
+            }
+        }
+        #endregion hallways
+        #region generation
         void Start()
         {
             GenerateDoors();
         }
-    }
-    public class DirectionHolder
-    {
-        public int Length => heldDirections.Length;
-        private bool[] heldDirections = { false, false, false, false };
-        public bool this[int index]
+        public void GenerateDoors()
         {
-            get
+            int numDoors = UnityEngine.Random.Range(1, 4);
+            for (int i = 0; i < numDoors; i++)
             {
-                return heldDirections[index];
+                // note that this will produce duplicates sometimes. this is fine by me, since i want to bias toward fewer doors anyway.
+                doors[UnityEngine.Random.Range(0, 3)] = true;
             }
-            set
+            // add required doors
+            MazeRoom temp;
+            foreach (Direction d in Directions.NESW)
             {
-                heldDirections[index] = value;
-            }            
-        }
-        public bool this[Direction d]
-        {
-            get
-            {
-                return this[(int)d];
-            }
-            set
-            {
-                this[(int)d] = value;
+                if ((temp = MazeMaker.RoomFrom(position, d)) != null && temp.HasDoorFacing(d)) OpenDoor(d);
             }
         }
-
-        public static IEnumerable<Direction> Directions
-        {
-            get
-            {
-                yield return Direction.NORTH;
-                yield return Direction.EAST;
-                yield return Direction.SOUTH;
-                yield return Direction.WEST;
-            }
-        }
+        #endregion generation
     }
 }
