@@ -6,8 +6,8 @@ using UnityEngine;
 namespace com.dninemfive.cmpm121.p3 {
     public class MazeMaker : MonoBehaviour
     {
-        const int MAX_RECURSION_DEPTH = 2;
-        public static Dictionary<(int x, int y), MazeRoom> MazeRooms;
+        const int MAX_RECURSION_DEPTH = 4;
+        public static Dictionary<(int x, int y), MazeRoom> MazeRooms = new Dictionary<(int x, int y), MazeRoom>();
         public GameObject mazeRoomPrefab;
         // not the same as DoorDirections mostly because i forgot, but also because they don't need to be interchangeable and it's more readable this way
         public enum Direction : byte
@@ -17,19 +17,21 @@ namespace com.dninemfive.cmpm121.p3 {
             SOUTH = 2,
             WEST = 3
         }
-        public static void GenerateNeighbors(MazeRoom room, int iterations = 0)
+        public void GenerateNeighbors(MazeRoom room, int iterations = 0)
         {
             foreach (Direction d in room.DoorDirections)
             {
                 GenerateRoom(CoordsFrom(room.position, d), iterations);
             }
         }
-        public static void GenerateRoom((int x, int y) pos, int iterations = 0)
+        public void GenerateRoom((int x, int y) pos, int iterations = 0)
         {
             if (iterations >= MAX_RECURSION_DEPTH) return;
-            MazeRoom newRoom = new MazeRoom(pos);
-            MazeRooms[pos] = newRoom;
-            GenerateNeighbors(newRoom, (++iterations));
+            GameObject newRoom = Instantiate(mazeRoomPrefab, new Vector3(10 * pos.x, 0, 10 * pos.y), Quaternion.identity);
+            MazeRoom newMR = newRoom.AddComponent<MazeRoom>();
+            newMR.position = pos;
+            MazeRooms[pos] = newMR;
+            GenerateNeighbors(newMR, ++iterations);
         }
 
         public static MazeRoom[] NeighborsOf((int x, int y) pos) 
@@ -64,6 +66,14 @@ namespace com.dninemfive.cmpm121.p3 {
                     return (x - 1, y);
                 default: throw new ArgumentNullException();
             }
+        }
+        private void Start()
+        {
+            MazeRoom center = GameObject.Find("MazeRoom").GetComponent<MazeRoom>();
+            (int x, int y) pos = (0, 0);
+            MazeRooms[pos] = center;
+            center.doors = (MazeRoom.DoorLocations)0b1111; // enable all
+            GenerateNeighbors(center);
         }
     }    
 }

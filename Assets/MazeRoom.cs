@@ -88,9 +88,8 @@ namespace com.dninemfive.cmpm121.p3
                 }
             }
         }
-        public MazeRoom((int x, int y) pos)
+        void Start()
         {
-            position = pos;
             GenerateDoors();
         }
     }
