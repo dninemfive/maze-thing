@@ -11,18 +11,30 @@ namespace com.dninemfive.cmpm121.p3
     {
         public Directions doors = new Directions();
         public (int x, int y) position;
+        public static Material White, Black;
+        public Dictionary<Direction, (GameObject door, GameObject roof)> objectsToward = new Dictionary<Direction, (GameObject door, GameObject roof)>();
         #region doors
-        public void OpenDoor(Direction door)
+        public void OpenDoor(Direction d)
         {
-            doors[door] = true;
+            doors[d] = true;
+            var (door, roof) = objectsToward[d];
+            roof.GetComponent<MeshRenderer>().material = Black;
+            door.SetActive(false);
         }
-        public void CloseDoor(Direction door)
+        public void CloseDoor(Direction d)
         {
-            doors[door] = false;
+            doors[d] = false;
+            var (door, roof) = objectsToward[d];
+            roof.GetComponent<MeshRenderer>().material = White;
+            door.SetActive(true);
         }
         public void OpenAllDoors()
         {
             foreach (Direction d in Directions.NESW) OpenDoor(d);
+        }
+        public void CloseAllDoors()
+        {
+            foreach (Direction d in Directions.NESW) CloseDoor(d);
         }
         public IEnumerable<Direction> DoorDirections
         {
@@ -71,7 +83,14 @@ namespace com.dninemfive.cmpm121.p3
         #region generation
         void Start()
         {
-            GenerateDoors();
+            foreach(Direction d in Directions.NESW)
+            {
+                GameObject door = transform.Find(d.Name() + " Door").gameObject;
+                GameObject roof = transform.Find(d.Name() + " Cardinal Roof").gameObject;
+                objectsToward[d] = (door, roof);
+            }
+            CloseAllDoors();
+            GenerateDoors();            
         }
         public void GenerateDoors()
         {

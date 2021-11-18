@@ -6,9 +6,29 @@ using UnityEngine;
 namespace com.dninemfive.cmpm121.p3 {    
     public class MazeMaker : MonoBehaviour
     {
+        /// <summary>
+        /// Maximum recursion depth. Controls how many neighbors, neighbor-neighbors, &c are generated each time a new room is entered.
+        /// </summary>
         const int MAX_RECURSION_DEPTH = 4;
+        /// <summary>
+        /// The field holding each room of the maze, indexed by their location.
+        /// </summary>
         public static Dictionary<(int x, int y), MazeRoom> MazeRooms = new Dictionary<(int x, int y), MazeRoom>();
+        /// <summary>
+        /// The prefab to place when generating a new maze room. Set in Unity. Requires the MazeRoom component and subobjects with the following names:
+        /// - [North|East|South|West] Cardinal Roof
+        /// - [North|East|South|West] Door
+        /// </summary>
         public GameObject mazeRoomPrefab;
+        /// <summary>
+        /// The instance of the current MazeMaker. Should never be necessary, mainly included to prevent creation of multiple MazeMaker instances.
+        /// </summary>
+        private static MazeMaker _singleton = null;
+        public static MazeMaker Singleton
+        {
+            get => _singleton;
+            private set { _singleton = value;  }
+        }
         #region generation
         public void GenerateNeighbors(MazeRoom room, int iterations = 0)
         {
@@ -58,17 +78,26 @@ namespace com.dninemfive.cmpm121.p3 {
                     return (x + 1, y);
                 case Direction.WEST:
                     return (x - 1, y);
-                default: throw new ArgumentNullException();
+                default: throw new ArgumentOutOfRangeException();
             }
         }
         #endregion inspection
         private void Start()
         {
-            MazeRoom center = GameObject.Find("MazeRoom").GetComponent<MazeRoom>();
-            (int x, int y) pos = (0, 0);
-            MazeRooms[pos] = center;
-            center.OpenAllDoors();
-            GenerateNeighbors(center);
+            MazeRoom.Black = GameObject.Find("Center Roof").GetComponent<MeshRenderer>().material;
+            MazeRoom.White = GameObject.Find("Northwest Corner").transform.GetChild(0).GetComponent<MeshRenderer>().material;
+            if (Singleton == null)
+            {
+                Destroy(this);
+            } else
+            {
+                Singleton = this;
+                MazeRoom center = GameObject.Find("MazeRoom").GetComponent<MazeRoom>();
+                (int x, int y) pos = (0, 0);
+                MazeRooms[pos] = center;
+                center.OpenAllDoors();
+                GenerateNeighbors(center);
+            }            
         }
     }    
 }

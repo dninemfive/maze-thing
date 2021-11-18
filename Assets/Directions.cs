@@ -49,6 +49,20 @@ namespace com.dninemfive.cmpm121.p3
                 yield return Direction.SOUTH;
                 yield return Direction.WEST;
             }
+        }        
+    }
+    public static class DirectionUtility
+    {
+        public static string Name(this Direction d)
+        {
+            switch (d)
+            {
+                case Direction.NORTH: return "North";
+                case Direction.EAST: return "East";
+                case Direction.SOUTH: return "South";
+                case Direction.WEST: return "West";
+                default: throw new ArgumentOutOfRangeException();
+            }
         }
     }
 }
