@@ -4,19 +4,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace com.dninemfive.cmpm121.p3 {
+    public enum Direction : byte
+    {
+        NORTH = 0,
+        EAST = 1,
+        SOUTH = 2,
+        WEST = 3
+    }
     public class MazeMaker : MonoBehaviour
     {
         const int MAX_RECURSION_DEPTH = 4;
         public static Dictionary<(int x, int y), MazeRoom> MazeRooms = new Dictionary<(int x, int y), MazeRoom>();
         public GameObject mazeRoomPrefab;
         // not the same as DoorDirections mostly because i forgot, but also because they don't need to be interchangeable and it's more readable this way
-        public enum Direction : byte
-        {
-            NORTH = 0,
-            EAST = 1,
-            SOUTH = 2,
-            WEST = 3
-        }
+        
         public void GenerateNeighbors(MazeRoom room, int iterations = 0)
         {
             foreach (Direction d in room.DoorDirections)

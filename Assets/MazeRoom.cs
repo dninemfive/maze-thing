@@ -9,65 +9,53 @@ namespace com.dninemfive.cmpm121.p3
 {
     public class MazeRoom : MonoBehaviour
     {
-        [Flags]
-        public enum DoorLocations : Byte
-        {
-            NONE = 0,
-            NORTH = 1,
-            EAST = 2,
-            SOUTH = 4,
-            WEST = 8
-        }
-        public DoorLocations doors;
+        public bool[] doors = { false, false, false, false };
         public (int x, int y) position;
 
-        public void ToggleDoor(DoorLocations door)
+        public void OpenDoor(Direction door)
         {
-            // xoring a flag toggles it
-            doors ^= door;
+            doors[(int)door] = true;
         }
-        public IEnumerable<MazeMaker.Direction> DoorDirections
+        public void CloseDoor(Direction door)
+        {
+            doors[(int)door] = false;
+        }
+        public IEnumerable<Direction> DoorDirections
         {
             get
             {
-                if ((doors & DoorLocations.NORTH) == DoorLocations.NORTH) yield return MazeMaker.Direction.NORTH;
-                if ((doors & DoorLocations.EAST) == DoorLocations.EAST) yield return MazeMaker.Direction.EAST;
-                if ((doors & DoorLocations.SOUTH) == DoorLocations.SOUTH) yield return MazeMaker.Direction.SOUTH;
-                if ((doors & DoorLocations.WEST) == DoorLocations.WEST) yield return MazeMaker.Direction.WEST;
+                for (int i = 0; i < doors.Length; i++) if (doors[i]) yield return (Direction)i;
             }
         }
-        public bool CanBeHallway => doors == (DoorLocations.NORTH | DoorLocations.SOUTH) || doors == (DoorLocations.EAST | DoorLocations.WEST);
-        private bool _isHallway = false;
-        public bool HasDoorFacing(MazeMaker.Direction d)
+        public bool CanBeHallway
         {
-            switch (d)
+            get
             {
-                case MazeMaker.Direction.NORTH:
-                    return (doors & DoorLocations.NORTH) == DoorLocations.NORTH;
-                case MazeMaker.Direction.EAST:
-                    return (doors & DoorLocations.EAST) == DoorLocations.EAST;
-                case MazeMaker.Direction.SOUTH:
-                    return (doors & DoorLocations.SOUTH) == DoorLocations.SOUTH;
-                case MazeMaker.Direction.WEST:
-                    return (doors & DoorLocations.WEST) == DoorLocations.WEST;
-                default: return false;
+                // because doors is in NESW order, indices of the same parity are in the same direction
+                if (doors[0] && doors[2] && !(doors[1] || doors[3])) return true;
+                if (doors[1] && doors[3] && !(doors[0] || doors[2])) return true;
+                return false;
             }
+        }
+        private bool _isHallway = false;
+        public bool HasDoorFacing(Direction d)
+        {
+            return doors[(int)d];
         }
         public void GenerateDoors()
         {
             int numDoors = UnityEngine.Random.Range(1, 4);
             for (int i = 0; i < numDoors; i++)
             {
-                // just writing this because it's cursed tbh
                 // note that this will produce duplicates sometimes. this is fine by me, since i want to bias toward fewer doors anyway.
-                doors |= (DoorLocations)(int)Math.Pow(2, UnityEngine.Random.Range(0, 3));
+                doors[UnityEngine.Random.Range(0, 3)] = true;
             }
             // add required doors
             MazeRoom temp;
-            if ((temp = MazeMaker.RoomFrom(position, MazeMaker.Direction.SOUTH)) != null && temp.HasDoorFacing(MazeMaker.Direction.NORTH)) doors |= DoorLocations.SOUTH;
-            if ((temp = MazeMaker.RoomFrom(position, MazeMaker.Direction.WEST)) != null && temp.HasDoorFacing(MazeMaker.Direction.EAST)) doors |= DoorLocations.WEST;
-            if ((temp = MazeMaker.RoomFrom(position, MazeMaker.Direction.NORTH)) != null && temp.HasDoorFacing(MazeMaker.Direction.SOUTH)) doors |= DoorLocations.NORTH;
-            if ((temp = MazeMaker.RoomFrom(position, MazeMaker.Direction.EAST)) != null && temp.HasDoorFacing(MazeMaker.Direction.WEST)) doors |= DoorLocations.EAST;
+            if ((temp = MazeMaker.RoomFrom(position, MazeMaker.Direction.SOUTH)) != null && temp.HasDoorFacing(Direction.NORTH)) doors[0] = true;
+            if ((temp = MazeMaker.RoomFrom(position, MazeMaker.Direction.WEST)) != null && temp.HasDoorFacing(Direction.EAST)) doors |= DoorLocations.WEST;
+            if ((temp = MazeMaker.RoomFrom(position, MazeMaker.Direction.NORTH)) != null && temp.HasDoorFacing(Direction.SOUTH)) doors |= DoorLocations.NORTH;
+            if ((temp = MazeMaker.RoomFrom(position, MazeMaker.Direction.EAST)) != null && temp.HasDoorFacing(Direction.WEST)) doors |= DoorLocations.EAST;
         }
         public bool Hallway
         {
