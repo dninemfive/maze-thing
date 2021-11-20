@@ -99,11 +99,11 @@ namespace com.dninemfive.cmpm121.p3
         public void PostStart((int x, int y) pos, bool initial = false)
         {
             transform.Find("Center Roof/CoordDisplay").gameObject.GetComponent<TextMeshPro>().SetText("(" + pos.x + "," + pos.y + ")");
+            position = pos;
+            MazeMaker.MazeRooms[pos] = this;
             if (initial) OpenAllDoors();
             else
-            {
-                position = pos;
-                MazeMaker.MazeRooms[pos] = this;
+            {                
                 CloseAllDoors();
                 GenerateDoors();
             }
@@ -135,7 +135,7 @@ namespace com.dninemfive.cmpm121.p3
                     }
                 } else
                 {
-                    Debug.Log("temp was null");
+                    Debug.Log("could not find room at " + MazeMaker.CoordsFrom(position, d) + ", " + d + " of room at " + position + ".");
                 }
             }
         }

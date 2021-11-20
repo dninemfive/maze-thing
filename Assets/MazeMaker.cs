@@ -96,6 +96,7 @@ namespace com.dninemfive.cmpm121.p3 {
                 MazeRoom center = GameObject.Find("MazeRoom").GetComponent<MazeRoom>();
                 center.PostStart((0, 0), true);
                 GenerateNeighbors(center);
+                Debug.Log(MazeRooms[(0, 0)]);
             }            
         }
     }    
