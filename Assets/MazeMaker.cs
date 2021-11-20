@@ -43,7 +43,7 @@ namespace com.dninemfive.cmpm121.p3 {
         }
         public void GenerateRoom((int x, int y) pos, int iterations = 0)
         {
-            if (iterations >= MAX_RECURSION_DEPTH) return;
+            if (iterations >= MAX_RECURSION_DEPTH || pos == (0, 0)) return;
             GameObject newRoom = Instantiate(mazeRoomPrefab, new Vector3(10 * pos.x, 0, 10 * pos.y), Quaternion.identity);
             MazeRoom newMR = newRoom.AddComponent<MazeRoom>();
             newMR.PostStart(pos);
