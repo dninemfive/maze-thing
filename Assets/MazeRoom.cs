@@ -26,16 +26,11 @@ namespace com.dninemfive.cmpm121.p3
         }
         public void CloseDoor(Direction d)
         {
-            Debug.Log("cd: " + d);
-            Debug.Log(roofToward.Count);
-            foreach (KeyValuePair<Direction, GameObject> kvp in roofToward) Debug.Log(kvp.Key + ":" + kvp.Value);
-            Debug.Log("wtf");
             doors[d] = false;
             GameObject roof = roofToward[d];            
             roof.GetComponent<Renderer>().material = White;
             GameObject door = doorToward[d];
             door.SetActive(true);
-            Debug.Log("cd: " + d.Name() + " door: " + door + ", roof: " + roof);
         }
         public void OpenAllDoors()
         {
@@ -43,8 +38,6 @@ namespace com.dninemfive.cmpm121.p3
         }
         public void CloseAllDoors()
         {
-            Debug.Log(roofToward.Count);
-            foreach (KeyValuePair<Direction, GameObject> kvp in roofToward) Debug.Log(kvp.Key + ":" + kvp.Value);
             foreach (Direction d in Directions.NESW) CloseDoor(d);
         }
         public IEnumerable<Direction> DoorDirections
@@ -98,15 +91,12 @@ namespace com.dninemfive.cmpm121.p3
             {
                 GameObject door = transform.Find(d.Name() + " Door").gameObject;                
                 GameObject roof = transform.Find(d.Name() + " Cardinal Roof").gameObject;
-                Debug.Log(d.Name() + " door: " + door + ", roof: " + roof);
                 doorToward[d] = door;
                 roofToward[d] = roof;
             }
-            Debug.Log(roofToward.Count);
         }
         public void PostStart((int x, int y) pos, bool initial = false)
         {
-            Debug.Log(roofToward.Count);
             if (initial) OpenAllDoors();
             else
             {
