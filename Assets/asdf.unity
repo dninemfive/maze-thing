@@ -433,6 +433,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mazeRoomPrefab: {fileID: 2979208668938159703, guid: cfe64ea35a483204c8cfa921c863fd31, type: 3}
+  white: {fileID: 2100000, guid: 1318bc9cb9067a049bb898ee48896063, type: 2}
+  black: {fileID: 2100000, guid: 34d03c44a89d9dc41b44682406bc3e3f, type: 2}
 --- !u!4 &827340983
 Transform:
   m_ObjectHideFlags: 0

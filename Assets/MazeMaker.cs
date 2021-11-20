@@ -46,9 +46,7 @@ namespace com.dninemfive.cmpm121.p3 {
             if (iterations >= MAX_RECURSION_DEPTH) return;
             GameObject newRoom = Instantiate(mazeRoomPrefab, new Vector3(10 * pos.x, 0, 10 * pos.y), Quaternion.identity);
             MazeRoom newMR = newRoom.AddComponent<MazeRoom>();
-            newMR.position = pos;
-            newMR.PostStart();
-            MazeRooms[pos] = newMR;
+            newMR.PostStart(pos);
             GenerateNeighbors(newMR, ++iterations);
         }
         #endregion generation
@@ -96,9 +94,7 @@ namespace com.dninemfive.cmpm121.p3 {
             {
                 Singleton = this;
                 MazeRoom center = GameObject.Find("MazeRoom").GetComponent<MazeRoom>();
-                (int x, int y) pos = (0, 0);
-                MazeRooms[pos] = center;
-                center.PostStart(true);
+                center.PostStart((0, 0), true);
                 GenerateNeighbors(center);
             }            
         }

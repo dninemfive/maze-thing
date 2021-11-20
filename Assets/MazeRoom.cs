@@ -13,23 +13,29 @@ namespace com.dninemfive.cmpm121.p3
         public (int x, int y) position;
         public static Material White => MazeMaker.White;
         public static Material Black => MazeMaker.Black;
-        public Dictionary<Direction, (GameObject door, GameObject roof)> objectsToward = new Dictionary<Direction, (GameObject door, GameObject roof)>();
+        public Dictionary<Direction, GameObject> doorToward = new Dictionary<Direction, GameObject>();
+        public Dictionary<Direction, GameObject> roofToward = new Dictionary<Direction, GameObject>();
         #region doors
         public void OpenDoor(Direction d)
         {
             doors[d] = true;
-            var (door, roof) = objectsToward[d];
+            GameObject roof = roofToward[d];
             roof.GetComponent<Renderer>().material = Black;
+            GameObject door = doorToward[d];
             door.SetActive(false);
         }
         public void CloseDoor(Direction d)
         {
-            Debug.Log("cd: " + d.Name());
+            Debug.Log("cd: " + d);
+            Debug.Log(roofToward.Count);
+            foreach (KeyValuePair<Direction, GameObject> kvp in roofToward) Debug.Log(kvp.Key + ":" + kvp.Value);
+            Debug.Log("wtf");
             doors[d] = false;
-            var (door, roof) = objectsToward[d];
-            Debug.Log("cd: " + d.Name() + " door: " + door + ", roof: " + roof);
+            GameObject roof = roofToward[d];            
             roof.GetComponent<Renderer>().material = White;
+            GameObject door = doorToward[d];
             door.SetActive(true);
+            Debug.Log("cd: " + d.Name() + " door: " + door + ", roof: " + roof);
         }
         public void OpenAllDoors()
         {
@@ -37,6 +43,7 @@ namespace com.dninemfive.cmpm121.p3
         }
         public void CloseAllDoors()
         {
+            foreach (KeyValuePair<Direction, GameObject> kvp in roofToward) Debug.Log(kvp.Key + ":" + kvp.Value);
             foreach (Direction d in Directions.NESW) CloseDoor(d);
         }
         public IEnumerable<Direction> DoorDirections
@@ -91,15 +98,17 @@ namespace com.dninemfive.cmpm121.p3
                 GameObject door = transform.Find(d.Name() + " Door").gameObject;                
                 GameObject roof = transform.Find(d.Name() + " Cardinal Roof").gameObject;
                 Debug.Log(d.Name() + " door: " + door + ", roof: " + roof);
-                objectsToward[d] = (door, roof);
+                doorToward[d] = door;
+                roofToward[d] = roof;
             }
-            foreach (KeyValuePair<Direction, (GameObject door, GameObject roof)> kvp in objectsToward.AsEnumerable()) Debug.Log(kvp.Key + " " + kvp.Value);
         }
-        public void PostStart(bool initial = false)
-        {
+        public void PostStart((int x, int y) pos, bool initial = false)
+        {            
             if (initial) OpenAllDoors();
             else
             {
+                position = pos;
+                MazeMaker.MazeRooms[pos] = this;
                 CloseAllDoors();
                 GenerateDoors();
             }

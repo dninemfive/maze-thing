@@ -64,5 +64,6 @@ namespace com.dninemfive.cmpm121.p3
                 default: throw new ArgumentOutOfRangeException();
             }
         }
+        public static int Int(this Direction d) => (int)d;
     }
 }
