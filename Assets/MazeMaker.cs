@@ -29,6 +29,10 @@ namespace com.dninemfive.cmpm121.p3 {
             get => _singleton;
             private set { _singleton = value;  }
         }
+        public Material white, black;
+        public static Material White => Singleton.white;
+        public static Material Black => Singleton.black;
+
         #region generation
         public void GenerateNeighbors(MazeRoom room, int iterations = 0)
         {
@@ -43,6 +47,7 @@ namespace com.dninemfive.cmpm121.p3 {
             GameObject newRoom = Instantiate(mazeRoomPrefab, new Vector3(10 * pos.x, 0, 10 * pos.y), Quaternion.identity);
             MazeRoom newMR = newRoom.AddComponent<MazeRoom>();
             newMR.position = pos;
+            newMR.PostStart();
             MazeRooms[pos] = newMR;
             GenerateNeighbors(newMR, ++iterations);
         }
@@ -84,9 +89,7 @@ namespace com.dninemfive.cmpm121.p3 {
         #endregion inspection
         private void Start()
         {
-            MazeRoom.Black = GameObject.Find("Center Roof").GetComponent<MeshRenderer>().material;
-            MazeRoom.White = GameObject.Find("Northwest Corner").transform.GetChild(0).GetComponent<MeshRenderer>().material;
-            if (Singleton == null)
+            if (Singleton != null)
             {
                 Destroy(this);
             } else
@@ -95,7 +98,7 @@ namespace com.dninemfive.cmpm121.p3 {
                 MazeRoom center = GameObject.Find("MazeRoom").GetComponent<MazeRoom>();
                 (int x, int y) pos = (0, 0);
                 MazeRooms[pos] = center;
-                center.OpenAllDoors();
+                center.PostStart(true);
                 GenerateNeighbors(center);
             }            
         }

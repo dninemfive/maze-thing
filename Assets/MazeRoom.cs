@@ -11,21 +11,24 @@ namespace com.dninemfive.cmpm121.p3
     {
         public Directions doors = new Directions();
         public (int x, int y) position;
-        public static Material White, Black;
+        public static Material White => MazeMaker.White;
+        public static Material Black => MazeMaker.Black;
         public Dictionary<Direction, (GameObject door, GameObject roof)> objectsToward = new Dictionary<Direction, (GameObject door, GameObject roof)>();
         #region doors
         public void OpenDoor(Direction d)
         {
             doors[d] = true;
             var (door, roof) = objectsToward[d];
-            roof.GetComponent<MeshRenderer>().material = Black;
+            roof.GetComponent<Renderer>().material = Black;
             door.SetActive(false);
         }
         public void CloseDoor(Direction d)
         {
+            Debug.Log("cd: " + d.Name());
             doors[d] = false;
             var (door, roof) = objectsToward[d];
-            roof.GetComponent<MeshRenderer>().material = White;
+            Debug.Log("cd: " + d.Name() + " door: " + door + ", roof: " + roof);
+            roof.GetComponent<Renderer>().material = White;
             door.SetActive(true);
         }
         public void OpenAllDoors()
@@ -85,12 +88,21 @@ namespace com.dninemfive.cmpm121.p3
         {
             foreach(Direction d in Directions.NESW)
             {
-                GameObject door = transform.Find(d.Name() + " Door").gameObject;
+                GameObject door = transform.Find(d.Name() + " Door").gameObject;                
                 GameObject roof = transform.Find(d.Name() + " Cardinal Roof").gameObject;
+                Debug.Log(d.Name() + " door: " + door + ", roof: " + roof);
                 objectsToward[d] = (door, roof);
             }
-            CloseAllDoors();
-            GenerateDoors();            
+            foreach (KeyValuePair<Direction, (GameObject door, GameObject roof)> kvp in objectsToward.AsEnumerable()) Debug.Log(kvp.Key + " " + kvp.Value);
+        }
+        public void PostStart(bool initial = false)
+        {
+            if (initial) OpenAllDoors();
+            else
+            {
+                CloseAllDoors();
+                GenerateDoors();
+            }
         }
         public void GenerateDoors()
         {
