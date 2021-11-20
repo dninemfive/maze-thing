@@ -43,6 +43,7 @@ namespace com.dninemfive.cmpm121.p3
         }
         public void CloseAllDoors()
         {
+            Debug.Log(roofToward.Count);
             foreach (KeyValuePair<Direction, GameObject> kvp in roofToward) Debug.Log(kvp.Key + ":" + kvp.Value);
             foreach (Direction d in Directions.NESW) CloseDoor(d);
         }
@@ -91,7 +92,7 @@ namespace com.dninemfive.cmpm121.p3
         }
         #endregion hallways
         #region generation
-        void Start()
+        void Awake()
         {
             foreach(Direction d in Directions.NESW)
             {
@@ -101,9 +102,11 @@ namespace com.dninemfive.cmpm121.p3
                 doorToward[d] = door;
                 roofToward[d] = roof;
             }
+            Debug.Log(roofToward.Count);
         }
         public void PostStart((int x, int y) pos, bool initial = false)
-        {            
+        {
+            Debug.Log(roofToward.Count);
             if (initial) OpenAllDoors();
             else
             {
