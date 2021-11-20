@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 namespace com.dninemfive.cmpm121.p3
@@ -97,6 +98,7 @@ namespace com.dninemfive.cmpm121.p3
         }
         public void PostStart((int x, int y) pos, bool initial = false)
         {
+            transform.Find("Center Roof/CoordDisplay").gameObject.GetComponent<TextMeshPro>().SetText("(" + pos.x + "," + pos.y + ")");
             if (initial) OpenAllDoors();
             else
             {
@@ -108,7 +110,7 @@ namespace com.dninemfive.cmpm121.p3
         }
         public void GenerateDoors()
         {
-            int numDoors = UnityEngine.Random.Range(1, 4);
+            int numDoors = UnityEngine.Random.Range(2, 4);
             for (int i = 0; i < numDoors; i++)
             {
                 // note that this will produce duplicates sometimes. this is fine by me, since i want to bias toward fewer doors anyway.
@@ -116,9 +118,25 @@ namespace com.dninemfive.cmpm121.p3
             }
             // add required doors
             MazeRoom temp;
+            Debug.Log("Adding required doors for room at " + position + ": ");
             foreach (Direction d in Directions.NESW)
             {
-                if ((temp = MazeMaker.RoomFrom(position, d)) != null && temp.HasDoorFacing(d)) OpenDoor(d);
+                temp = MazeMaker.RoomFrom(position, d);
+                if(temp != null)
+                {
+                    if(temp.HasDoorFacing(d.Opposite()))
+                    {
+                        Debug.Log("room at " + temp.position + ", " + d + " of room at " + position + " has door facing " + d.Opposite());
+                        OpenDoor(d);
+                    }
+                    else
+                    {
+                        Debug.Log("room at " + temp.position + ", " + d + " of room at " + position + " does not have door facing " + d.Opposite());
+                    }
+                } else
+                {
+                    Debug.Log("temp was null");
+                }
             }
         }
         #endregion generation

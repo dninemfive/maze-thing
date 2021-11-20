@@ -65,5 +65,16 @@ namespace com.dninemfive.cmpm121.p3
             }
         }
         public static int Int(this Direction d) => (int)d;
+        public static Direction Opposite(this Direction d)
+        {
+            switch (d)
+            {
+                case Direction.NORTH: return Direction.SOUTH;
+                case Direction.EAST: return Direction.WEST;
+                case Direction.SOUTH: return Direction.NORTH;
+                case Direction.WEST: return Direction.EAST;
+                default: throw new ArgumentOutOfRangeException();
+            }
+        }
     }
 }

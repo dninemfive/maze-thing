@@ -9,7 +9,7 @@ namespace com.dninemfive.cmpm121.p3 {
         /// <summary>
         /// Maximum recursion depth. Controls how many neighbors, neighbor-neighbors, &c are generated each time a new room is entered.
         /// </summary>
-        const int MAX_RECURSION_DEPTH = 4;
+        const int MAX_RECURSION_DEPTH = 2;
         /// <summary>
         /// The field holding each room of the maze, indexed by their location.
         /// </summary>
