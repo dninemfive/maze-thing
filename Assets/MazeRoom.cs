@@ -107,6 +107,11 @@ namespace com.dninemfive.cmpm121.p3
             transform.Find("Center Roof/CoordDisplay").gameObject.GetComponent<TextMeshPro>().SetText("(" + pos.x + "," + pos.y + ")");
             position = pos;
             Light.color = Color.HSVToRGB(Mathf.Clamp01(Mathf.Sin(position.x) + Mathf.Sin(position.y)), 1, 1);
+            if (position == (0, 0))
+            {
+                CameraManager.CurrentCamera = Camera;
+                Camera.SetActive(true);
+            }
             MazeMaker.MazeRooms[pos] = this;
             if (initial) OpenAllDoors();
             else

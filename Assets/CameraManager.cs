@@ -7,7 +7,7 @@ namespace com.dninemfive.cmpm121.p3
     {
         public GameObject mainCamera;
         public static GameObject MainCamera => Singleton.mainCamera;
-        public static GameObject CurrentCamera { get; private set; }
+        public static GameObject CurrentCamera { get; set; }
         public static GameObject CameraForCurrentRoom => Player.ActivePlayer.CurrentRoom.Camera;
         public static CameraManager Singleton;
         // Start is called before the first frame update
@@ -19,25 +19,12 @@ namespace com.dninemfive.cmpm121.p3
                 return;
             }
             Singleton = this;
-            CurrentCamera = CameraForCurrentRoom;
-            CurrentCamera.SetActive(true);
         }
 
         // Update is called once per frame
         void Update()
         {
 
-        }
-        public static void ToggleCamera()
-        {
-            Debug.Log("togglecamera()");
-            if(CurrentCamera == MainCamera)
-            {
-                SwitchCameraTo(CameraForCurrentRoom);
-            } else
-            {
-                SwitchCameraTo(MainCamera);
-            }
         }
         public static void SwitchCameraTo(GameObject c)
         {
