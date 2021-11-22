@@ -17,6 +17,7 @@ namespace com.dninemfive.cmpm121.p3
         public Dictionary<Direction, GameObject> doorToward = new Dictionary<Direction, GameObject>();
         public Dictionary<Direction, GameObject> roofToward = new Dictionary<Direction, GameObject>();
         public GameObject Camera;
+        public bool HasDoneGeneration = false;
         #region doors
         public void OpenDoor(Direction d)
         {
@@ -142,6 +143,10 @@ namespace com.dninemfive.cmpm121.p3
                     Debug.Log("could not find room at " + MazeMaker.CoordsFrom(position, d) + ", " + d + " of room at " + position + ".");
                 }
             }
+        }
+        public void GenerateNeighbors(int iterations = 0)
+        {
+            MazeMaker.Singleton.GenerateNeighbors(this, iterations);
         }
         #endregion generation
     }

@@ -10,7 +10,7 @@ namespace com.dninemfive.cmpm121.p3
         public CharacterController controller;
         public GameObject Light;
         public (int x, int y) MazeRoomCoords => (Mathf.RoundToInt(transform.position.x / 10), Mathf.RoundToInt(transform.position.z / 10));
-        private (int x, int y) prevMazeRoomCoords;
+        private (int x, int y) prevMazeRoomCoords = (0, 0);
         public MazeRoom CurrentRoom => MazeMaker.RoomAt(MazeRoomCoords);
         public float speed = 10;
         // Start is called before the first frame update
@@ -21,19 +21,7 @@ namespace com.dninemfive.cmpm121.p3
 
         // Update is called once per frame
         void Update()
-        {
-            (int x, int y) curMRCoords = MazeRoomCoords;
-            if(curMRCoords != prevMazeRoomCoords)
-            {
-                if(curMRCoords == (0, 0))
-                {
-                    Light.SetActive(false);
-                } else
-                {
-                    Light.SetActive(true);
-                }
-                CameraManager.OnNewRoom();
-            }
+        {            
             float v = Input.GetAxis("Vertical"),
                   h = Input.GetAxis("Horizontal");
             Vector3 velocity = Vector3.zero;
@@ -46,7 +34,26 @@ namespace com.dninemfive.cmpm121.p3
             Vector3 angle = transform.eulerAngles;
             angle.y += rot * Time.deltaTime * 60;
             transform.eulerAngles = angle;
+            if (MazeRoomCoords != prevMazeRoomCoords) OnNewRoom();
             prevMazeRoomCoords = MazeRoomCoords;
+        }
+        public void OnNewRoom()
+        {
+            Debug.Log("OnNewRoom(): " + MazeRoomCoords);
+            if (MazeRoomCoords == (0, 0))
+            {
+                Light.SetActive(false);
+            }
+            else
+            {
+                Light.SetActive(true);
+            }
+            MazeRoom curRoom = MazeMaker.RoomAt(MazeRoomCoords);
+            if(!curRoom.HasDoneGeneration)
+            {
+                curRoom.GenerateNeighbors();
+            }
+            CameraManager.SwitchToNewRoomCamera();
         }
     }
 }

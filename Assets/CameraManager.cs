@@ -19,6 +19,7 @@ namespace com.dninemfive.cmpm121.p3
                 return;
             }
             Singleton = this;
+            CurrentCamera = MainCamera;
         }
 
         // Update is called once per frame
@@ -28,6 +29,7 @@ namespace com.dninemfive.cmpm121.p3
         }
         public static void ToggleCamera()
         {
+            Debug.Log("togglecamera()");
             if(CurrentCamera == MainCamera)
             {
                 SwitchCameraTo(CameraForCurrentRoom);
@@ -43,9 +45,9 @@ namespace com.dninemfive.cmpm121.p3
             c.SetActive(true);
             CurrentCamera = c;
         }
-        public static void OnNewRoom()
+        public static void SwitchToNewRoomCamera()
         {
-            if(CurrentCamera != MainCamera)
+            if (CurrentCamera != MainCamera)
             {
                 SwitchCameraTo(CameraForCurrentRoom);
             }
