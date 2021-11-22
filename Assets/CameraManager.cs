@@ -6,21 +6,19 @@ namespace com.dninemfive.cmpm121.p3
 {    public class CameraManager : MonoBehaviour
     {
         public GameObject mainCamera;
-        public GameObject CurrentCamera { get; private set; }
-        public MazeRoom CurrentRoom
-        {
-            get
-            {
-                Vector3 playerCoords = Player.ActivePlayer.transform.position;
-                (int x, int y) mazeRoomCoords = (Mathf.RoundToInt(playerCoords.x / 10), Mathf.RoundToInt(playerCoords.z / 10));
-                return MazeMaker.RoomAt(mazeRoomCoords);
-            }
-        }
-        public GameObject CameraForCurrentRoom => CurrentRoom.Camera;
+        public static GameObject MainCamera => Singleton.mainCamera;
+        public static GameObject CurrentCamera { get; private set; }
+        public static GameObject CameraForCurrentRoom => Player.ActivePlayer.CurrentRoom.Camera;
+        public static CameraManager Singleton;
         // Start is called before the first frame update
         void Start()
         {
-
+            if(Singleton != null)
+            {
+                Destroy(this);
+                return;
+            }
+            Singleton = this;
         }
 
         // Update is called once per frame
@@ -28,22 +26,29 @@ namespace com.dninemfive.cmpm121.p3
         {
 
         }
-        public void ToggleCamera()
+        public static void ToggleCamera()
         {
-            if(CurrentCamera == mainCamera)
+            if(CurrentCamera == MainCamera)
             {
                 SwitchCameraTo(CameraForCurrentRoom);
             } else
             {
-                SwitchCameraTo(mainCamera);
+                SwitchCameraTo(MainCamera);
             }
         }
-        public void SwitchCameraTo(GameObject c)
+        public static void SwitchCameraTo(GameObject c)
         {
             if (CurrentCamera == c) return;
             CurrentCamera.SetActive(false);
             c.SetActive(true);
             CurrentCamera = c;
+        }
+        public static void OnNewRoom()
+        {
+            if(CurrentCamera != MainCamera)
+            {
+                SwitchCameraTo(CameraForCurrentRoom);
+            }
         }
     }
 }
