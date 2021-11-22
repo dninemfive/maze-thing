@@ -10,16 +10,42 @@ namespace com.dninemfive.cmpm121.p3
 {
     public class MazeRoom : MonoBehaviour
     {
+        /// <summary>
+        /// A <c>Directions</c> instance holding the status of the door in each cardinal direction, either open or closed.
+        /// </summary>
         public Directions doors = new Directions();
+        /// <summary>
+        /// The position of this room in grid space. The center of the prefab will be at (10x, 0, 10y) in Unity's <c>Vector3</c> coordinate system.
+        /// </summary>
         public (int x, int y) position;
+        /// <summary>
+        /// Aliases for the materials described in the <c>MazeMaker</c> class.
+        /// </summary>
         public static Material White => MazeMaker.White;
         public static Material Black => MazeMaker.Black;
+        /// <summary>
+        /// Lookup tables for the door and roof subobjects, respectively, in a given cardinal direction.
+        /// </summary>
         public Dictionary<Direction, GameObject> doorToward = new Dictionary<Direction, GameObject>();
         public Dictionary<Direction, GameObject> roofToward = new Dictionary<Direction, GameObject>();
+        /// <summary>
+        /// The Camera contained in this room.
+        /// </summary>
         public GameObject Camera;
+        /// <summary>
+        /// The <c>Light</c> component of the Point Light contained in this room.
+        /// </summary>
         public Light Light;
+        /// <summary>
+        /// Whether or not this room has been entered. When the room is first entered, room generation will propogate out according to the recursion depth in <c>MazeMaker</c>.
+        /// </summary>
         public bool HasDoneGeneration = false;
+
         #region doors
+        /// <summary>
+        /// Opens the door in the given direction. The component of the roof pointing in that direction is colored in so it can be seen on the minimap.
+        /// </summary>
+        /// <param name="d">The <c>Direction</c> of the door to open.</param>
         public void OpenDoor(Direction d)
         {
             doors[d] = true;
@@ -28,6 +54,10 @@ namespace com.dninemfive.cmpm121.p3
             GameObject door = doorToward[d];
             door.SetActive(false);
         }
+        /// <summary>
+        /// Closes the door in the given direction. The component of the roof pointing in that direction is whited out so that it is no longer indicated on the minimap.
+        /// </summary>
+        /// <param name="d">The <c>Direction</c> of the door to close.</param>
         public void CloseDoor(Direction d)
         {
             doors[d] = false;
@@ -44,6 +74,9 @@ namespace com.dninemfive.cmpm121.p3
         {
             foreach (Direction d in Directions.NESW) CloseDoor(d);
         }
+        /// <summary>
+        /// The set of <c>Direction</c>s toward open doors only.
+        /// </summary>
         public IEnumerable<Direction> DoorDirections
         {
             get
