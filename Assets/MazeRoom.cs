@@ -16,6 +16,7 @@ namespace com.dninemfive.cmpm121.p3
         public static Material Black => MazeMaker.Black;
         public Dictionary<Direction, GameObject> doorToward = new Dictionary<Direction, GameObject>();
         public Dictionary<Direction, GameObject> roofToward = new Dictionary<Direction, GameObject>();
+        public GameObject Camera;
         #region doors
         public void OpenDoor(Direction d)
         {
@@ -107,6 +108,7 @@ namespace com.dninemfive.cmpm121.p3
                 CloseAllDoors();
                 GenerateDoors();
             }
+            Debug.Log("Room at " + position + " has in-game coords " + transform.position);
         }
         public void GenerateDoors()
         {
