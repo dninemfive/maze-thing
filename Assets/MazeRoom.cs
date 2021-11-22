@@ -119,7 +119,7 @@ namespace com.dninemfive.cmpm121.p3
             for (int i = 0; i < numDoors; i++)
             {
                 // note that this will produce duplicates sometimes. this is fine by me, since i want to bias toward fewer doors anyway.
-                OpenDoor((Direction)UnityEngine.Random.Range(0, 3));
+                OpenDoor((Direction)UnityEngine.Random.Range(0, 4));
             }
             // add required doors
             MazeRoom temp;
