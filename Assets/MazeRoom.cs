@@ -17,6 +17,7 @@ namespace com.dninemfive.cmpm121.p3
         public Dictionary<Direction, GameObject> doorToward = new Dictionary<Direction, GameObject>();
         public Dictionary<Direction, GameObject> roofToward = new Dictionary<Direction, GameObject>();
         public GameObject Camera;
+        public Light Light;
         public bool HasDoneGeneration = false;
         #region doors
         public void OpenDoor(Direction d)
@@ -92,6 +93,7 @@ namespace com.dninemfive.cmpm121.p3
         {
             Camera = transform.Find("Camera").gameObject;
             Camera.SetActive(false);
+            Light = transform.Find("Point Light").gameObject.GetComponent<Light>();            
             foreach(Direction d in Directions.NESW)
             {
                 GameObject door = transform.Find(d.Name() + " Door").gameObject;                
@@ -104,6 +106,7 @@ namespace com.dninemfive.cmpm121.p3
         {
             transform.Find("Center Roof/CoordDisplay").gameObject.GetComponent<TextMeshPro>().SetText("(" + pos.x + "," + pos.y + ")");
             position = pos;
+            Light.color = new Color(ColorSin(position.x), ColorSin(position.y), ColorTan(position.x * position.y));
             MazeMaker.MazeRooms[pos] = this;
             if (initial) OpenAllDoors();
             else
@@ -111,7 +114,7 @@ namespace com.dninemfive.cmpm121.p3
                 CloseAllDoors();
                 GenerateDoors();
             }
-            Debug.Log("Room at " + position + " has in-game coords " + transform.position);
+            //Debug.Log("Room at " + position + " has in-game coords " + transform.position);
         }
         public void GenerateDoors()
         {
@@ -123,7 +126,7 @@ namespace com.dninemfive.cmpm121.p3
             }
             // add required doors
             MazeRoom temp;
-            Debug.Log("Adding required doors for room at " + position + ": ");
+            //Debug.Log("Adding required doors for room at " + position + ": ");
             foreach (Direction d in Directions.NESW)
             {
                 temp = MazeMaker.RoomFrom(position, d);
@@ -131,16 +134,16 @@ namespace com.dninemfive.cmpm121.p3
                 {
                     if(temp.HasDoorFacing(d.Opposite()))
                     {
-                        Debug.Log("room at " + temp.position + ", " + d + " of room at " + position + " has door facing " + d.Opposite());
+                        //Debug.Log("room at " + temp.position + ", " + d + " of room at " + position + " has door facing " + d.Opposite());
                         OpenDoor(d);
                     }
                     else
                     {
-                        Debug.Log("room at " + temp.position + ", " + d + " of room at " + position + " does not have door facing " + d.Opposite());
+                        //Debug.Log("room at " + temp.position + ", " + d + " of room at " + position + " does not have door facing " + d.Opposite());
                     }
                 } else
                 {
-                    Debug.Log("could not find room at " + MazeMaker.CoordsFrom(position, d) + ", " + d + " of room at " + position + ".");
+                    //Debug.Log("could not find room at " + MazeMaker.CoordsFrom(position, d) + ", " + d + " of room at " + position + ".");
                 }
             }
         }
@@ -149,5 +152,22 @@ namespace com.dninemfive.cmpm121.p3
             MazeMaker.Singleton.GenerateNeighbors(this, iterations);
         }
         #endregion generation
+        /// <summary>
+        /// Normalizes the sine function to be wihtin [0,1] by shifting and shrinking the entire distribution. 
+        /// </summary>
+        /// <param name="f">A float interpreted as an angle in radians.</param>
+        /// <param name="divisor">A number by which to divide f, used to make integer arguments have values other than 0.5.</param>
+        /// <returns>The sine of f, with negative values in [0,0.5) and positive values in (0.5,1].</returns>
+        public static float ColorSin(float f, float divisor = 3f)
+        {
+            float sin = Mathf.Sin(f / divisor);
+            return (sin + 1f) / 2f;
+        }
+
+        public static float ColorTan(float f, float divisor = 5f)
+        {
+            float tan = Mathf.Tan(f / divisor);
+            return (tan + 1f) / 2f;
+        }
     }
 }

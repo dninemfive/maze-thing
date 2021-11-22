@@ -8,7 +8,7 @@ namespace com.dninemfive.cmpm121.p3
     {
         public static Player ActivePlayer;
         public CharacterController controller;
-        public GameObject Light;
+        public GameObject Light = null;
         public (int x, int y) MazeRoomCoords => (Mathf.RoundToInt(transform.position.x / 10), Mathf.RoundToInt(transform.position.z / 10));
         private (int x, int y) prevMazeRoomCoords = (0, 0);
         public MazeRoom CurrentRoom => MazeMaker.RoomAt(MazeRoomCoords);
@@ -40,18 +40,16 @@ namespace com.dninemfive.cmpm121.p3
         public void OnNewRoom()
         {
             Debug.Log("OnNewRoom(): " + MazeRoomCoords);
-            if (MazeRoomCoords == (0, 0))
+            if(Light != null)
             {
-                Light.SetActive(false);
-            }
-            else
-            {
-                Light.SetActive(true);
+                if (MazeRoomCoords == (0, 0)) Light.SetActive(false);
+                else Light.SetActive(true);
             }
             MazeRoom curRoom = MazeMaker.RoomAt(MazeRoomCoords);
             if(!curRoom.HasDoneGeneration)
             {
                 curRoom.GenerateNeighbors();
+                curRoom.HasDoneGeneration = true;
             }
             CameraManager.SwitchToNewRoomCamera();
         }
