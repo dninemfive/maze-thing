@@ -36,24 +36,24 @@ namespace com.dninemfive.cmpm121.p3
             ActivePlayer = this;
         }
         void Update()
-        {            
+        {
+            DoMovement();
+            if (MazeRoomCoords != prevMazeRoomCoords) OnNewRoom();
+            prevMazeRoomCoords = MazeRoomCoords;
+        }
+        public void DoMovement()
+        {
             float v = Input.GetAxis("Vertical"),
                   h = Input.GetAxis("Horizontal");
             Vector3 velocity = Vector3.zero;
             velocity += transform.forward * v * speed;
             velocity += transform.right * h * speed;
+            // the controller handles deltaTime conversion and collisions for us.
             controller.SimpleMove(velocity);
-            float rot = 0;
-            if (Input.GetKey(KeyCode.Q)) rot -= 1;
-            if (Input.GetKey(KeyCode.E)) rot += 1;
-            Vector3 angle = transform.eulerAngles;
-            angle.y += rot * Time.deltaTime * 60;
-            transform.eulerAngles = angle;
-            if (MazeRoomCoords != prevMazeRoomCoords) OnNewRoom();
-            prevMazeRoomCoords = MazeRoomCoords;
         }
         public void OnNewRoom()
         {
+            // if <c>Light</c> is defined as described above, turn it off in the main room so the player can see the baked lights instead.
             if(Light != null)
             {
                 if (MazeRoomCoords == (0, 0)) Light.SetActive(false);
