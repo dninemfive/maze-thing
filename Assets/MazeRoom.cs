@@ -50,44 +50,12 @@ namespace com.dninemfive.cmpm121.p3
             {
                 foreach(Direction d in Directions.NESW) if (doors[d]) yield return d;
             }
-        }       
-        
+        } 
         public bool HasDoorFacing(Direction d)
         {
             return doors[d];
         }
         #endregion doors
-        #region hallways
-        private bool _isHallway = false;
-        public bool Hallway
-        {
-            get => _isHallway;
-            set
-            {
-                if (value)
-                {
-                    if (!CanBeHallway)
-                    {
-                        Debug.LogError("Tried to make a hallway out of an invalid room!");
-                    }
-                    _isHallway = value;
-                }
-                else
-                {
-                    _isHallway = value;
-                }
-            }
-        }
-        public bool CanBeHallway
-        {
-            get
-            {
-                bool NS = doors[Direction.NORTH] || doors[Direction.SOUTH];
-                bool EW = doors[Direction.EAST]  || doors[Direction.WEST];
-                return (NS && !EW) || (EW && !NS);
-            }
-        }
-        #endregion hallways
         #region generation
         void Awake()
         {
@@ -119,7 +87,6 @@ namespace com.dninemfive.cmpm121.p3
                 CloseAllDoors();
                 GenerateDoors();
             }
-            //Debug.Log("Room at " + position + " has in-game coords " + transform.position);
         }
         public void GenerateDoors()
         {
@@ -131,25 +98,10 @@ namespace com.dninemfive.cmpm121.p3
             }
             // add required doors
             MazeRoom temp;
-            //Debug.Log("Adding required doors for room at " + position + ": ");
             foreach (Direction d in Directions.NESW)
             {
                 temp = MazeMaker.RoomFrom(position, d);
-                if(temp != null)
-                {
-                    if(temp.HasDoorFacing(d.Opposite()))
-                    {
-                        //Debug.Log("room at " + temp.position + ", " + d + " of room at " + position + " has door facing " + d.Opposite());
-                        OpenDoor(d);
-                    }
-                    else
-                    {
-                        //Debug.Log("room at " + temp.position + ", " + d + " of room at " + position + " does not have door facing " + d.Opposite());
-                    }
-                } else
-                {
-                    //Debug.Log("could not find room at " + MazeMaker.CoordsFrom(position, d) + ", " + d + " of room at " + position + ".");
-                }
+                if(temp != null && temp.HasDoorFacing(d.Opposite())) OpenDoor(d);
             }
         }
         public void GenerateNeighbors(int iterations = 0)

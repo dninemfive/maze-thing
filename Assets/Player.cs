@@ -13,13 +13,10 @@ namespace com.dninemfive.cmpm121.p3
         private (int x, int y) prevMazeRoomCoords = (0, 0);
         public MazeRoom CurrentRoom => MazeMaker.RoomAt(MazeRoomCoords);
         public float speed = 10;
-        // Start is called before the first frame update
         void Start()
         {
             ActivePlayer = this;
         }
-
-        // Update is called once per frame
         void Update()
         {            
             float v = Input.GetAxis("Vertical"),
