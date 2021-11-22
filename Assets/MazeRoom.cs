@@ -89,6 +89,7 @@ namespace com.dninemfive.cmpm121.p3
         #region generation
         void Awake()
         {
+            Camera = transform.Find("Camera").gameObject;
             foreach(Direction d in Directions.NESW)
             {
                 GameObject door = transform.Find(d.Name() + " Door").gameObject;                
