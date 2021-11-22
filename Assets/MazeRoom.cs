@@ -106,7 +106,7 @@ namespace com.dninemfive.cmpm121.p3
         {
             transform.Find("Center Roof/CoordDisplay").gameObject.GetComponent<TextMeshPro>().SetText("(" + pos.x + "," + pos.y + ")");
             position = pos;
-            Light.color = new Color(ColorSin(position.x), ColorSin(position.y), ColorTan(position.x * position.y));
+            Light.color = Color.HSVToRGB(Mathf.Clamp01(Mathf.Sin(position.x) + Mathf.Sin(position.y)), 1, 1);
             MazeMaker.MazeRooms[pos] = this;
             if (initial) OpenAllDoors();
             else
@@ -152,22 +152,5 @@ namespace com.dninemfive.cmpm121.p3
             MazeMaker.Singleton.GenerateNeighbors(this, iterations);
         }
         #endregion generation
-        /// <summary>
-        /// Normalizes the sine function to be wihtin [0,1] by shifting and shrinking the entire distribution. 
-        /// </summary>
-        /// <param name="f">A float interpreted as an angle in radians.</param>
-        /// <param name="divisor">A number by which to divide f, used to make integer arguments have values other than 0.5.</param>
-        /// <returns>The sine of f, with negative values in [0,0.5) and positive values in (0.5,1].</returns>
-        public static float ColorSin(float f, float divisor = 3f)
-        {
-            float sin = Mathf.Sin(f / divisor);
-            return (sin + 1f) / 2f;
-        }
-
-        public static float ColorTan(float f, float divisor = 5f)
-        {
-            float tan = Mathf.Tan(f / divisor);
-            return (tan + 1f) / 2f;
-        }
     }
 }
