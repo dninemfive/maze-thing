@@ -21,8 +21,8 @@ namespace com.dninemfive.cmpm121.p3
             float v = Input.GetAxis("Vertical"),
                   h = Input.GetAxis("Horizontal");
             Vector3 velocity = Vector3.zero;
-            velocity += transform.forward * h * speed;
-            velocity += transform.right * v * speed;
+            velocity += transform.forward * v * speed;
+            velocity += transform.right * h * speed;
             controller.SimpleMove(velocity);
             float rot = 0;
             if (Input.GetKey(KeyCode.Q)) rot -= 1;
