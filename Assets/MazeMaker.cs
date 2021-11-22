@@ -15,13 +15,15 @@ namespace com.dninemfive.cmpm121.p3 {
         /// </summary>
         public static Dictionary<(int x, int y), MazeRoom> MazeRooms = new Dictionary<(int x, int y), MazeRoom>();
         /// <summary>
-        /// The prefab to place when generating a new maze room. Set in Unity. Requires the MazeRoom component and subobjects with the following names:
+        /// The prefab to place when generating a new maze room. Set in Unity. Requires the <c>MazeRoom</c> component and subobjects with the following names:
         /// - [North|East|South|West] Cardinal Roof
         /// - [North|East|South|West] Door
+        /// - Camera
+        /// - Point Light
         /// </summary>
         public GameObject mazeRoomPrefab;
         /// <summary>
-        /// The instance of the current MazeMaker. Should never be necessary, mainly included to prevent creation of multiple MazeMaker instances.
+        /// The unique instance of the MazeMaker, which must not be static because it's a <c>MonoBehaviour</c>.        
         /// </summary>
         private static MazeMaker _singleton = null;
         public static MazeMaker Singleton
@@ -29,7 +31,13 @@ namespace com.dninemfive.cmpm121.p3 {
             get => _singleton;
             private set { _singleton = value;  }
         }
+        /// <summary>
+        /// The materials used for representing open and non-open door directions, respectively. Non-static so they can be set directly in Unity.
+        /// </summary>
         public Material white, black;
+        /// <summary>
+        /// Static references to the above materials, for convenience.
+        /// </summary>
         public static Material White => Singleton.white;
         public static Material Black => Singleton.black;
 
@@ -99,7 +107,6 @@ namespace com.dninemfive.cmpm121.p3 {
                 MazeRoom center = GameObject.Find("MazeRoom").GetComponent<MazeRoom>();
                 center.PostStart((0, 0), true);
                 GenerateNeighbors(center);
-                Debug.Log(MazeRooms[(0, 0)]);
             }            
         }
     }    

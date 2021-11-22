@@ -13,6 +13,9 @@ namespace com.dninemfive.cmpm121.p3
         SOUTH = 2,
         WEST = 3
     }
+    /// <summary>
+    /// Wrapper class for the <c>Direction</c> enum, allowing more readable direct accesses of a set of cardinal directions and more readable direction enumeration.
+    /// </summary>
     public class Directions
     {
         public int Length => heldDirections.Length;
@@ -39,7 +42,6 @@ namespace com.dninemfive.cmpm121.p3
                 this[(int)d] = value;
             }
         }
-
         public static IEnumerable<Direction> NESW
         {
             get
@@ -51,8 +53,13 @@ namespace com.dninemfive.cmpm121.p3
             }
         }        
     }
+    /// <summary>
+    /// Contains extension methods for the <c>Direction</c> enum.
+    /// </summary>
     public static class DirectionUtility
     {
+        // This could probably be replaced with the implicit string conversion for enums, but I forgot that existed.
+        // Would require changing the enum capitalization to Firstonly rather than ALLCAPS.
         public static string Name(this Direction d)
         {
             switch (d)

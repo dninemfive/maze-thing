@@ -57,8 +57,10 @@ namespace com.dninemfive.cmpm121.p3
         }
         #endregion doors
         #region generation
+        // Runs when the object is instantiated rather than when it's enabled. Using <c>Start</c> instead caused weird issues.
         void Awake()
         {
+            // Setting all these in Unity directly seemed not to work. I'm probably missing something.
             Camera = transform.Find("Camera").gameObject;
             Camera.SetActive(false);
             Light = transform.Find("Point Light").gameObject.GetComponent<Light>();            
@@ -70,20 +72,25 @@ namespace com.dninemfive.cmpm121.p3
                 roofToward[d] = roof;
             }
         }
+        /// <summary>
+        /// Finalizes room creation. Should always be run after instantiation. Needed to pass in the position of the room, as well as to handle the unique case of the first room.
+        /// </summary>
+        /// <param name="pos">This room's position in MazeRoom space.</param>
+        /// <param name="initial">Whether this is the initial room and should therefore have all doors open and the camera enabled, or otherwise it should be generated normally.</param>
         public void PostStart((int x, int y) pos, bool initial = false)
         {
             transform.Find("Center Roof/CoordDisplay").gameObject.GetComponent<TextMeshPro>().SetText("(" + pos.x + "," + pos.y + ")");
             position = pos;
             Light.color = Color.HSVToRGB(Mathf.Clamp01(Mathf.Sin(position.x) + Mathf.Sin(position.y)), 1, 1);
-            if (position == (0, 0))
+            MazeMaker.MazeRooms[pos] = this;
+            if (initial)
             {
                 CameraManager.CurrentCamera = Camera;
                 Camera.SetActive(true);
+                OpenAllDoors();
             }
-            MazeMaker.MazeRooms[pos] = this;
-            if (initial) OpenAllDoors();
             else
-            {                
+            {
                 CloseAllDoors();
                 GenerateDoors();
             }
