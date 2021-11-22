@@ -39,7 +39,6 @@ namespace com.dninemfive.cmpm121.p3
         }
         public void OnNewRoom()
         {
-            Debug.Log("OnNewRoom(): " + MazeRoomCoords);
             if(Light != null)
             {
                 if (MazeRoomCoords == (0, 0)) Light.SetActive(false);
